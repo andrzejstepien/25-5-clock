@@ -25,9 +25,10 @@ function App() {
     }
 
     const formatTimeLeft = (timeLeftInSeconds)=>{
-      const minutes = Math.floor(timeLeftInSeconds/60)
-      const seconds = (timeLeftInSeconds%60)
-      return minutes.toString()+":"+seconds.toString()
+      const minutes = Math.floor(timeLeftInSeconds/60).toString()
+      const seconds = (timeLeftInSeconds%60).toString()
+      const formattedSeconds = ("0"+seconds).slice(-2)
+      return minutes+":"+formattedSeconds
     }
 
 
@@ -46,16 +47,22 @@ function App() {
     }
     const reset = ()=>{
       pause()
+      setBreakLength(5)
+      setSessionLength(25)
       setTimeLeftInSeconds(sessionLength*60)
-      resetDeadline()
     }
     const incrementBreak = (x)=>{
-      setBreakLength(prev=>prev+x)
+      setBreakLength(prev=>{return increment(prev,x)})
     }
     const incrementSession = (x)=>{
-      setSessionLength(prev=>prev+x)
+      setSessionLength(prev=>{return increment(prev,x)})
     }
-    
+    const increment = (prev,x)=>{
+      const canIncrement = (prev+x)>0 && (prev+x)<=60
+      if(canIncrement){
+        return prev+x
+      }else{return prev}
+    }
 
 
     return (
@@ -63,17 +70,17 @@ function App() {
         <header><h1>25 + 5 Clock</h1></header>
       <p id="break-label">Break</p>
       <p id="break-length">{breakLength}</p>
-      <button id="increment-break-length" onClick={()=>incrementBreak(1)}>MORE</button>
-      <button id="increment-break-length" onClick={()=>incrementBreak(-1)}>LESS</button>
+      <button id="break-decrement" onClick={()=>incrementBreak(1)}>MORE</button>
+      <button id="break-increment" onClick={()=>incrementBreak(-1)}>LESS</button>
       <p id="session-label">Session</p>
       <p id="session-length">{sessionLength}</p>
-      <button id="increment-session-length" onClick={()=>incrementSession(1)}>MORE</button>
-      <button id="increment-session-length" onClick={()=>incrementSession(-1)}>LESS</button>
+      <button id="session-increment" onClick={()=>incrementSession(1)}>MORE</button>
+      <button id="session-decrement" onClick={()=>incrementSession(-1)}>LESS</button>
       <p id="timer-label">Timer</p>
       <p id="time-left">{formatTimeLeft(timeLeftInSeconds)}</p>
-      <button onClick={pause}>PAUSE</button>
+      <button id="start_stop" onClick={pause}>PAUSE</button>
       <p>{paused?"PAUSED":"NOT PAUSED"}</p>
-      <button onClick={reset}>RESET</button>
+      <button id="reset" onClick={reset}>RESET</button>
       <p>{"deadline: "+deadline}</p>
 
       </div>

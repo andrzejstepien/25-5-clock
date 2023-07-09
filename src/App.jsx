@@ -1,6 +1,13 @@
 import { useState, useRef, useEffect } from 'react'
 import gong from "/src/assets/411574__inspectorj__alto-gong-metal-hit-b-h6-xy.wav"
 import './App.css'
+import plusSVG from "/src/assets/plus-square.svg"
+import minusSVG from "/src/assets/minus-square.svg"
+import resetSVG from "/src/assets/arrow-reload.svg"
+import startSVG from "/src/assets/play-pause-white.svg"
+import stopSVG from "/src/assets/play-pause-black.svg"
+
+
 function App() {
 
   const [breakLength, setBreakLength] = useState(5)
@@ -8,6 +15,11 @@ function App() {
   const [timeLeftSeconds, setTimeLeftSeconds] = useState(sessionLength * 60)
   const [isRunning, setisRunning] = useState(false)
   const [phase, setPhase] = useState("session")
+  const [phrase, setPhrase] = useState("")
+
+  useEffect(()=>{
+    randomizePhrase()
+  },[])
 
   useEffect(() => {
     let timer = null
@@ -30,6 +42,10 @@ function App() {
   useEffect(() => {
     setTimeLeftSeconds(phaseLengthSeconds[phase]())
   }, [sessionLength, phase])
+
+  useEffect(()=>{
+    randomizePhrase()
+  },[phase])
 
 
 
@@ -90,22 +106,49 @@ function App() {
     } else { return prev }
   }
 
+  const phraseArrays = {
+    break:[
+      "You deserve a break!",
+      "Now, breathe!",
+      "Time to take a breather!",
+      "And rest!"
+    ],
+    session:[
+      "You can do it!",
+      "Keep going!",
+      "Back to work!",
+      "Power through!"
+    ]
+  
+
+  }
+  const randomElem = (array)=>{
+    
+    return array[Math.floor(Math.random()*(array.length-1))]
+  }
+
+  const randomizePhrase = ()=>{
+    setPhrase(randomElem(phraseArrays[phase]))
+  }
+
+  console.log(randomElem(phraseArrays[phase]))
 
   return (
+    <div id="bg" className={phase}>
     <div className="App">
       <header><h1>25 + 5 Clock</h1></header>
       <div id="phase-controls">
         <div id="break-controls">
           <p id="break-label" className="phase-label">Break</p>
           <p id="break-length" className='length'>{breakLength}</p>
-          <button id="break-increment" onClick={() => incrementBreak(1)}>MORE</button>
-          <button id="break-decrement" onClick={() => incrementBreak(-1)}>LESS</button>
+          <img id="break-increment" className="clickable" src={plusSVG} onClick={() => incrementBreak(1)}/>
+          <img id="break-decrement" className="clickable" src={minusSVG} onClick={() => incrementBreak(-1)}/>
         </div>
         <div id="session-controls">
           <p id="session-label" className="phase-label">Session</p>
           <p id="session-length" className='length'>{sessionLength}</p>
-          <button id="session-increment" onClick={() => incrementSession(1)}>MORE</button>
-          <button id="session-decrement" onClick={() => incrementSession(-1)}>LESS</button>
+          <img id="session-increment" className="clickable" src={plusSVG} onClick={() => incrementSession(1)}/>
+          <img id="session-decrement" className="clickable" src={minusSVG} onClick={() => incrementSession(-1)}/>
         </div>
       </div>
       <div id="timer-controls">
@@ -113,16 +156,17 @@ function App() {
 
       </div>
       <div id="timer">
-        <p id="timer-label">{phase == "break" ? "BREAK TIME!" : "YOU CAN DO IT!"}</p>
+        <p id="timer-label">{phrase}</p>
         <p id="time-left">{formatTimeLeft(timeLeftSeconds)}</p>
       </div>
       <div id="timer-controls">
-        <button id="start_stop" onClick={pause}>{isRunning ? "STOP" : "START"}</button>
-        <button id="reset" onClick={reset}>RESET</button>
+        <img id="start_stop" className="clickable" src={isRunning?stopSVG:startSVG} onClick={pause}/>
+        <img id="reset" className="clickable" src={resetSVG} onClick={reset}/>
         <audio id="beep" src={gong}></audio>
       </div>
       
       <p>"Alto Gong, Metal Hit, B (H6 XY).wav" by InspectorJ (www.jshaw.co.uk) of Freesound.org</p>
+    </div>
     </div>
   );
 

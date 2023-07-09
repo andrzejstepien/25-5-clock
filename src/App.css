@@ -1,11 +1,21 @@
+html{
+    margin:0;
+}
 body{
         font-size:1.6px;
+        font-family: 'Poppins', sans-serif;
+        color:white;
+        margin:0;
 }
 header{
     text-align: center;
 }
+img{
+    width:4rem;
+}
 h1{
     font-size: 3rem;
+    margin:0;
 }
 p{
     font-size:1rem;
@@ -23,6 +33,8 @@ p{
     font-size: 8rem;
     margin-top:0.5rem;
     margin-bottom: 1rem;
+    line-height:1em;
+
 }
 #timer-label{
     font-size: 2rem;
@@ -35,6 +47,7 @@ p{
 .length{
     font-size: 4rem;
     margin:1rem;
+    line-height: 1em;
 }
 .phase-label{
     font-size:2rem;
@@ -56,6 +69,21 @@ p{
     margin:auto;
 }
 
-button{
-    font-size: 2rem;;
+
+#bg{
+    height:100vh;
+}
+
+.session{
+    background-color: #FFB4B4;
+}
+
+.break{
+    background-color: #B2A4FF;
+}
+
+
+.clickable:hover{
+    cursor:pointer;
+    
 }

@@ -5,44 +5,39 @@ function App() {
 
     const [breakLength, setBreakLength] = useState(5)
     const [sessionLength, setSessionLength] = useState(25)
-    const [timeLeftInSeconds, setTimeLeftInSeconds] = useState(sessionLength*60)
-    const [deadline, setDeadline] = useState(new Date().getTime())
+    const [timeLeftSeconds, setTimeLeftSeconds] = useState(sessionLength*60)
     const [paused, setPaused] = useState(true)
 
     useEffect(()=>{
       let timer = null
+      const interval = 1000
       if(!paused){
         timer = setInterval(()=>{
-          setTimeLeftInSeconds(calculateTimeLeft())
-        },1000)
+          setTimeLeftSeconds(prev=>{
+            if(prev>0){return prev-interval/1000
+          }else{return 0}  
+          })
+        },interval)
       }else{clearInterval(timer)}
-    })
+      return ()=>{clearInterval(timer)}
+    },[paused])
 
 
 
-    const calculateTimeLeft = ()=>{
-      let current = new Date().getTime()/1000
-      return Math.floor(deadline-current)
+
+    const formatTimeLeft = (timeLeftSeconds)=>{
+      const minutes = Math.floor(timeLeftSeconds/60).toString()
+      const seconds = (timeLeftSeconds%60).toString()
+      const formatted = (str)=>{
+        return ("0"+str).slice(-2)
+      }
+      return formatted(minutes)+":"+formatted(seconds)
     }
 
-    const formatTimeLeft = (timeLeftInSeconds)=>{
-      const minutes = Math.floor(timeLeftInSeconds/60).toString()
-      const seconds = (timeLeftInSeconds%60).toString()
-      const formattedSeconds = ("0"+seconds).slice(-2)
-      return minutes+":"+formattedSeconds
-    }
 
-
-    const resetDeadline = ()=>{
-      setDeadline(()=>{
-        const current = new Date().getTime()/1000
-        return current+timeLeftInSeconds
-      })
-    }
 
     const pause = ()=>{
       if(paused){
-        resetDeadline()
         setPaused(false)
       }else{setPaused(true)}
     }
@@ -50,13 +45,14 @@ function App() {
       setPaused(true)
       setBreakLength(5)
       setSessionLength(25)
-      setTimeLeftInSeconds(sessionLength*60)
+      setTimeLeftSeconds(sessionLength*60)
     }
     const incrementBreak = (x)=>{
       setBreakLength(prev=>{return increment(prev,x)})
     }
     const incrementSession = (x)=>{
       setSessionLength(prev=>{return increment(prev,x)})
+      setTimeLeftSeconds(sessionLength*60)
     }
     const increment = (prev,x)=>{
       const canIncrement = (prev+x)>0 && (prev+x)<=60
@@ -78,11 +74,11 @@ function App() {
       <button id="session-increment" onClick={()=>incrementSession(1)}>MORE</button>
       <button id="session-decrement" onClick={()=>incrementSession(-1)}>LESS</button>
       <p id="timer-label">Timer</p>
-      <p id="time-left">{formatTimeLeft(timeLeftInSeconds)}</p>
+      <p id="time-left">{formatTimeLeft(timeLeftSeconds)}</p>
       <button id="start_stop" onClick={pause}>PAUSE</button>
       <p>{paused?"PAUSED":"NOT PAUSED"}</p>
       <button id="reset" onClick={reset}>RESET</button>
-      <p>{"deadline: "+deadline}</p>
+
 
       </div>
     );

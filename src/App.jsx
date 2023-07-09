@@ -10,14 +10,15 @@ function App() {
     const [paused, setPaused] = useState(true)
 
     useEffect(()=>{
-      const timer = setTimeout(()=>{
-        if(!paused){
+      let timer = null
+      if(!paused){
+        timer = setInterval(()=>{
           setTimeLeftInSeconds(calculateTimeLeft())
-        }
-        }
-        ,1000)
-      return ()=>clearTimeout(timer)
+        },1000)
+      }else{clearInterval(timer)}
     })
+
+
 
     const calculateTimeLeft = ()=>{
       let current = new Date().getTime()/1000
@@ -46,7 +47,7 @@ function App() {
       }else{setPaused(true)}
     }
     const reset = ()=>{
-      pause()
+      setPaused(true)
       setBreakLength(5)
       setSessionLength(25)
       setTimeLeftInSeconds(sessionLength*60)

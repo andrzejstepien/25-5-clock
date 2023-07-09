@@ -6,12 +6,12 @@ function App() {
     const [breakLength, setBreakLength] = useState(5)
     const [sessionLength, setSessionLength] = useState(25)
     const [timeLeftSeconds, setTimeLeftSeconds] = useState(sessionLength*60)
-    const [paused, setPaused] = useState(true)
+    const [isRunning, setisRunning] = useState(false)
 
     useEffect(()=>{
       let timer = null
       const interval = 1000
-      if(!paused){
+      if(isRunning){
         timer = setInterval(()=>{
           setTimeLeftSeconds(prev=>{
             if(prev>0){return prev-interval/1000
@@ -20,8 +20,11 @@ function App() {
         },interval)
       }else{clearInterval(timer)}
       return ()=>{clearInterval(timer)}
-    },[paused])
+    },[isRunning])
 
+    useEffect(()=>{
+      setTimeLeftSeconds(sessionLength*60)
+    },[sessionLength])
 
 
 
@@ -37,22 +40,22 @@ function App() {
 
 
     const pause = ()=>{
-      if(paused){
-        setPaused(false)
-      }else{setPaused(true)}
+      if(isRunning){
+        setisRunning(false)
+      }else{setisRunning(true)}
     }
     const reset = ()=>{
-      setPaused(true)
+      setisRunning(true)
       setBreakLength(5)
       setSessionLength(25)
       setTimeLeftSeconds(sessionLength*60)
+      setisRunning(false)
     }
     const incrementBreak = (x)=>{
       setBreakLength(prev=>{return increment(prev,x)})
     }
     const incrementSession = (x)=>{
       setSessionLength(prev=>{return increment(prev,x)})
-      setTimeLeftSeconds(sessionLength*60)
     }
     const increment = (prev,x)=>{
       const canIncrement = (prev+x)>0 && (prev+x)<=60
@@ -76,7 +79,7 @@ function App() {
       <p id="timer-label">Timer</p>
       <p id="time-left">{formatTimeLeft(timeLeftSeconds)}</p>
       <button id="start_stop" onClick={pause}>PAUSE</button>
-      <p>{paused?"PAUSED":"NOT PAUSED"}</p>
+      <p>{isRunning?"isRunning":"NOT isRunning"}</p>
       <button id="reset" onClick={reset}>RESET</button>
 
 
